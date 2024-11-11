@@ -2,9 +2,14 @@
 name = "rwhich"
 version = "0.1.0"
 edition = "2021"
-authors = ["Marc Xiao <marc47marc47@gmail.com>"]
+authors = ["MarcXiao <marc47marc47@gmail.com>"]
+description = "like linux which, can find where the exec command is"
+readme = "README.md"
 license = "Apache-2.0"
 keywords = ["which", "linux", "which-rs"]
 categories = ["Command line utilities", "Filesystem"]
 
 [dependencies]
+
+[lib]
+name = "rwhich"
