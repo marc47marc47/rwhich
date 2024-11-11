@@ -1,0 +1,7 @@
+/target
+/logs
+/tmp
+/log
+nohup
+*.swp
+/*/*.swp
