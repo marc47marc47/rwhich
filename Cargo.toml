@@ -1,6 +1,6 @@
 [package]
 name = "rwhich"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["MarcXiao <marc47marc47@gmail.com>"]
 description = "like linux which, can find where the exec command is"
