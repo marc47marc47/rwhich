@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["MarcXiao <marc47marc47@gmail.com>"]
 description = "like linux which, can find where the exec command is"
+homepage = "https://github.com/marc47marc47/rwhich"
 readme = "README.md"
 license = "Apache-2.0"
 keywords = ["which", "linux", "which-rs"]

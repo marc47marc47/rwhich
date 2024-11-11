@@ -11,12 +11,14 @@ usage like linux which command
 
 
 Usage: which-rs [options] command...
+
        rwhich ls
        rwhich openssl
        rwhich opewnssl.exe
        rwhich code.exe
 
 Options:
+
   -h, --help    Display this help message
   
 
