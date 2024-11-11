@@ -8,5 +8,15 @@ usage like linux which command
   rwhich openssl.exe
   rwhich code.exe
 ```
+
+
+Usage: which-rs [options] command...
+       rwhich ls
+       rwhich openssl
+       rwhich opewnssl.exe
+       rwhich code.exe
+
+Options:
+  -h, --help    Display this help message
   
 
