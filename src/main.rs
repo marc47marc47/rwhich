@@ -9,12 +9,19 @@ fn is_executable(path: &Path) -> bool {
             {
                 use std::os::unix::fs::PermissionsExt;
                 let permissions = metadata.permissions();
-                // 检查文件是否具有执行权限
                 return permissions.mode() & 0o111 != 0;
             }
-            #[cfg(not(unix))]
+            #[cfg(windows)]
             {
-                // 在非 Unix 系统上，假设所有文件都可执行
+                if let Some(ext) = path.extension() {
+                    let ext = ext.to_string_lossy().to_lowercase();
+                    let pathext = get_windows_extensions();
+                    return pathext.contains(&format!(".{}", ext));
+                }
+                return false;
+            }
+            #[cfg(not(any(unix, windows)))]
+            {
                 return true;
             }
         }
@@ -22,32 +29,64 @@ fn is_executable(path: &Path) -> bool {
     false
 }
 
+#[cfg(windows)]
+fn get_windows_extensions() -> Vec<String> {
+    let pathext_var = env::var("PATHEXT").unwrap_or_default();
+    pathext_var
+        .split(';')
+        .filter(|s| !s.is_empty())
+        .map(|s| s.to_lowercase())
+        .collect()
+}
+
+fn find_command_in_paths(command: &str, paths: &[PathBuf]) -> Option<PathBuf> {
+    for dir in paths {
+        let cmd_path = dir.join(command);
+        if is_executable(&cmd_path) {
+            return Some(cmd_path);
+        }
+    }
+    None
+}
+
 fn main() {
-    // 获取命令行参数，跳过程序自身的名称
     let args: Vec<String> = env::args().skip(1).collect();
     if args.is_empty() {
-        eprintln!("用法: which-rs 命令...");
+        eprintln!("usage: rwhich command ...");
         std::process::exit(1);
     }
 
-    // 获取环境变量 PATH
     let path_var = env::var("PATH").unwrap_or_default();
-    // 使用 env::split_paths 处理路径分隔符，跨平台兼容
     let paths: Vec<PathBuf> = env::split_paths(&path_var).collect();
+
+    #[cfg(windows)]
+    let extensions = get_windows_extensions();
 
     for command in args {
         let mut found = false;
-        for dir in &paths {
-            let cmd_path = dir.join(&command);
-            if is_executable(&cmd_path) {
-                println!("{}", cmd_path.display());
-                found = true;
-                // 如果想查找所有匹配项，可以注释掉以下这行
-                break;
+
+        if let Some(cmd_path) = find_command_in_paths(&command, &paths) {
+            println!("{}", cmd_path.display());
+            found = true;
+        } else {
+            #[cfg(windows)]
+            {
+                //let command_lower = command.to_lowercase();
+                if Path::new(&command).extension().is_none() {
+                    for ext in &extensions {
+                        let command_with_ext = format!("{}{}", command, ext);
+                        if let Some(cmd_path) = find_command_in_paths(&command_with_ext, &paths) {
+                            println!("{}", cmd_path.display());
+                            found = true;
+                            break;
+                        }
+                    }
+                }
             }
         }
+
         if !found {
-            eprintln!("未找到命令: {}", command);
+            eprintln!("command not found: {}", command);
         }
     }
 }

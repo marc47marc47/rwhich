@@ -1,6 +1,10 @@
 [package]
-name = "which-rs"
+name = "rwhich"
 version = "0.1.0"
 edition = "2021"
+authors = ["Marc Xiao <marc47marc47@gmail.com>"]
+license = "Apache-2.0"
+keywords = ["which", "linux", "which-rs"]
+categories = ["Command line utilities", "Filesystem"]
 
 [dependencies]
